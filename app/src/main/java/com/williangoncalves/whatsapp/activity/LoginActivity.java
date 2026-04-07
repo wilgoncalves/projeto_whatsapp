@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        editEmail = findViewById(R.id.editEmail);
-        editSenha = findViewById(R.id.editSenha);
+        editEmail = findViewById(R.id.editLoginEmail);
+        editSenha = findViewById(R.id.editLoginSenha);
     }
 
     public void validarLoginUsuario(View view) {
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-
+                    abrirTelaPrincipal();
                 } else {
                     String excecao = "";
                     try {
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void abrirTelaPrincipal() {
-
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     public void abrirTelaCadastro(View view) {
