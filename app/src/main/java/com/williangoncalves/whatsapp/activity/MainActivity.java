@@ -1,5 +1,6 @@
 package com.williangoncalves.whatsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         autenticacao = ConfiguracaoFirebase.getFirebaseAuth();
 
-        Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
-        toolbar.setTitle("WhatsApp");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.whatsapp_name);
         setSupportActionBar(toolbar);
 
         // Configurar abas:
@@ -71,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
             deslogarUsuario();
             finish();
         }
+
+        if (item.getItemId() == R.id.menuConfiguracoes) {
+            abrirConfiguracoes();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -80,5 +85,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void abrirConfiguracoes() {
+        startActivity(new Intent(this, ConfiguracoesActivity.class));
     }
 }

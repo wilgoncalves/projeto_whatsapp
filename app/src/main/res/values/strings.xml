@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhatsApp</string>
+    <string name="whatsapp_name">WhatsApp</string>
     <string name="digite_email">Digite seu e-mail</string>
     <string name="digite_senha">Digite sua senha</string>
     <string name="botao_logar">Logar</string>
@@ -8,8 +8,11 @@
     <string name="botao_cadastrar">Cadastrar</string>
     <string name="menu_pesquisar">Pesquisar</string>
     <string name="menu_configuracoes">Configurações</string>
+    <string name="configuracoes_name">Configurações</string>
     <string name="menu_sair">Sair</string>
 
     <string name="fragment_conversas">Conversas</string>
     <string name="fragment_contatos">Contatos</string>
+    <string name="nome_usuario">Nome do usuário</string>
+    <string name="texto_configuracoes">Esse não é o seu nome de usuário nem sua senha. Esse nome ficará visível para seus contatos no WhatsApp.</string>
 </resources>
