@@ -42,9 +42,13 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    //Firebase dependences:
+    //Firebase dependencies:
     implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
+
+    // SmartTabLayout depencencies:
+    implementation("com.ogaclejapan.smarttablayout:library:2.0.0@aar")
+    implementation("com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar")
 }

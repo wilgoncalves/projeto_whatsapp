@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 import com.williangoncalves.whatsapp.R;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
 import com.williangoncalves.whatsapp.model.Usuario;
@@ -26,8 +27,7 @@ import com.williangoncalves.whatsapp.model.Usuario;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText editEmail, editSenha;
-    private Button buttonLogar;
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth autenticacao = ConfiguracaoFirebase.getFirebaseAuth();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarUsuario(Usuario usuario) {
-        autenticacao = ConfiguracaoFirebase.getFirebaseAuth();
         autenticacao.signInWithEmailAndPassword(usuario.getEmail(),
                 usuario.getSenha()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -91,6 +90,16 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser usuarioAtual = autenticacao.getCurrentUser();
+
+        if (usuarioAtual != null) {
+            abrirTelaPrincipal();
+        }
     }
 
     public void abrirTelaPrincipal() {

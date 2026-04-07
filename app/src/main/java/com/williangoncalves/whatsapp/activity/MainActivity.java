@@ -1,15 +1,30 @@
 package com.williangoncalves.whatsapp.activity;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.viewpager.widget.ViewPager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.williangoncalves.whatsapp.R;
+import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
+import com.williangoncalves.whatsapp.fragment.ContatosFragment;
+import com.williangoncalves.whatsapp.fragment.ConversasFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth autenticacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,5 +36,49 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        autenticacao = ConfiguracaoFirebase.getFirebaseAuth();
+
+        Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
+        toolbar.setTitle("WhatsApp");
+        setSupportActionBar(toolbar);
+
+        // Configurar abas:
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(),
+                FragmentPagerItems.with(this)
+                .add(R.string.fragment_conversas, ConversasFragment.class)
+                .add(R.string.fragment_contatos, ContatosFragment.class)
+                .create()
+        );
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        viewPager.setAdapter(adapter);
+
+        SmartTabLayout smartTabLayout = findViewById(R.id.smartTabLayout);
+        smartTabLayout.setViewPager(viewPager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menuSair) {
+            deslogarUsuario();
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void deslogarUsuario() {
+        try {
+            autenticacao.signOut();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
