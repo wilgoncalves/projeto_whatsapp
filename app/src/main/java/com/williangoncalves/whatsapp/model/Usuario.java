@@ -1,6 +1,7 @@
 package com.williangoncalves.whatsapp.model;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
 
 public class Usuario {
@@ -16,10 +17,11 @@ public class Usuario {
     public void salvarUsuario() {
         DatabaseReference firebaseReferencia = ConfiguracaoFirebase.getFirebaseDatabase();
         firebaseReferencia.child("usuarios")
-                .child(this.idUsuario)
+                .child(getIdUsuario())
                 .setValue(this);
     }
 
+    @Exclude
     public String getIdUsuario() {
         return idUsuario;
     }
@@ -44,6 +46,7 @@ public class Usuario {
         this.email = email;
     }
 
+    @Exclude
     public String getSenha() {
         return senha;
     }
