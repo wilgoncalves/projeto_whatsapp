@@ -50,7 +50,7 @@
         app:layout_constraintTop_toBottomOf="@+id/circleImageViewFotoPerfil">
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/editTextPerfilNome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -59,7 +59,7 @@
             android:text="@string/nome_usuario" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/imageViewEditarNome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

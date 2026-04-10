@@ -23,7 +23,7 @@ public class Permissao {
                     listaPermissoes.add(permissao);
                 }
             }
-            // Caso a lsita esteja vazia, não é necessário solicitar permissão:
+            // Caso a lista esteja vazia, não é necessário solicitar permissão:
             if (listaPermissoes.isEmpty()) {
                 return true;
             }

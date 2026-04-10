@@ -2,7 +2,12 @@ package com.williangoncalves.whatsapp.model;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
+import com.williangoncalves.whatsapp.helper.UsuarioFirebase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Usuario {
 
@@ -10,6 +15,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+    private String foto;
 
     public Usuario() {
     }
@@ -19,6 +25,35 @@ public class Usuario {
         firebaseReferencia.child("usuarios")
                 .child(getIdUsuario())
                 .setValue(this);
+    }
+
+    public void atualizar() {
+        String idUsuario = UsuarioFirebase.getIdUsuario();
+        DatabaseReference firebaseDatabase = ConfiguracaoFirebase.getFirebaseDatabase();
+        DatabaseReference usuariosRef = firebaseDatabase.child("usuarios")
+                .child(idUsuario);
+
+        Map<String, Object> valoresUsuario = converterParaMap();
+
+        usuariosRef.updateChildren(valoresUsuario);
+    }
+
+    @Exclude
+    public Map<String, Object> converterParaMap() {
+        HashMap<String, Object> usuarioMap = new HashMap<>();
+        usuarioMap.put("email", getEmail());
+        usuarioMap.put("nome", getNome());
+        usuarioMap.put("foto", getFoto());
+
+        return usuarioMap;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     @Exclude
