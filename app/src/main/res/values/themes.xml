@@ -9,6 +9,5 @@
     <style name="Theme.WhatsApp" parent="Base.Theme.WhatsApp" />
 
     <style name="Toolbar" parent="Theme.AppCompat.NoActionBar">
-
     </style>
 </resources>
