@@ -2,6 +2,7 @@ package com.williangoncalves.whatsapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
@@ -23,9 +25,12 @@ import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
 import com.williangoncalves.whatsapp.fragment.ContatosFragment;
 import com.williangoncalves.whatsapp.fragment.ConversasFragment;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth autenticacao;
+    private MaterialSearchView materialSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +62,54 @@ public class MainActivity extends AppCompatActivity {
 
         SmartTabLayout smartTabLayout = findViewById(R.id.smartTabLayout);
         smartTabLayout.setViewPager(viewPager);
+
+        // Configuração do searchview:
+        materialSearchView = findViewById(R.id.materialSearchPrincipal);
+
+        // Listener para o searchview:
+        materialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                ConversasFragment fragment = (ConversasFragment) adapter.getPage(0);
+                fragment.recarregarConversas();
+            }
+        });
+
+        // Listener para caixa de texto
+        materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Log.d("evento", "onQueryTextSubmit");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Log.d("evento", "onQueryTextChange");
+                ConversasFragment fragment = (ConversasFragment) adapter.getPage(0);
+
+                if (newText != null && !newText.isEmpty()) {
+                    fragment.pesquisarConversas(newText.toLowerCase());
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
+
+        // Configurar botão de pesquisa:
+        MenuItem item = menu.findItem(R.id.menuPesquisa);
+        materialSearchView.setMenuItem(item);
+
         return super.onCreateOptionsMenu(menu);
     }
 

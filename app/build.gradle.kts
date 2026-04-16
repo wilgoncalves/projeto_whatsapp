@@ -61,4 +61,7 @@ dependencies {
 
     // Circle Image View dependency:
     implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    // Material Search View dependency:
+    implementation("com.github.ZinoKader:MaterialSearchView:1.4.2")
 }
