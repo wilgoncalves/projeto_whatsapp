@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.williangoncalves.whatsapp.R;
 import com.williangoncalves.whatsapp.activity.ChatActivity;
+import com.williangoncalves.whatsapp.activity.GrupoActivity;
 import com.williangoncalves.whatsapp.adapter.ContatoAdapter;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
 import com.williangoncalves.whatsapp.helper.RecyclerItemClickListener;
@@ -61,7 +62,7 @@ public class ContatosFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewListaContatos.setLayoutManager(layoutManager);
         recyclerViewListaContatos.setHasFixedSize(true);
-        recyclerViewListaContatos.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL));
+        //recyclerViewListaContatos.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL));
         recyclerViewListaContatos.setAdapter(adapter);
 
         // Configurando evento de clique no recyclerview:
@@ -73,9 +74,15 @@ public class ContatosFragment extends Fragment {
                         @Override
                         public void onItemClick(View view, int position) {
                             Usuario usuarioSelecionado = listaContatos.get(position);
-                            Intent intent = new Intent(new Intent(getActivity(), ChatActivity.class));
-                            intent.putExtra("chatContato", usuarioSelecionado);
-                            startActivity(intent);
+                            boolean cabecalho = usuarioSelecionado.getEmail().isEmpty();
+
+                            if (cabecalho) {
+                                startActivity(new Intent(getActivity(), GrupoActivity.class));
+                            } else {
+                                Intent intent = new Intent(new Intent(getActivity(), ChatActivity.class));
+                                intent.putExtra("chatContato", usuarioSelecionado);
+                                startActivity(intent);
+                            }
                         }
 
                         @Override
@@ -90,6 +97,15 @@ public class ContatosFragment extends Fragment {
                     }
                 )
         );
+
+        /* Define usuário com e-mail vazio,
+        em caso de e-mail vazio, o usuário será utilizado
+        como cabeçalho, exibindo novo grupo. */
+        Usuario itemGrupo = new Usuario();
+        itemGrupo.setNome("Novo grupo");
+        itemGrupo.setEmail("");
+
+        listaContatos.add(itemGrupo);
 
         return view;
     }
