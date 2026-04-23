@@ -11,6 +11,7 @@
     <string name="configuracoes_name">Configurações</string>
     <string name="chat_name">ChatActivity</string>
     <string name="menu_sair">Sair</string>
+    <string name="toolbar_novo_grupo">Novo grupo</string>
 
     <string name="fragment_conversas">Conversas</string>
     <string name="fragment_contatos">Contatos</string>
