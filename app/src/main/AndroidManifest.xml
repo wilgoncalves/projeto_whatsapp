@@ -19,6 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhatsApp">
         <activity
+            android:name=".activity.CadastroGrupoActivity"
+            android:exported="false"
+            android:parentActivityName=".activity.GrupoActivity" />
+        <activity
             android:name=".activity.GrupoActivity"
             android:exported="false"
             android:parentActivityName=".activity.MainActivity" />

@@ -1,7 +1,9 @@
 package com.williangoncalves.whatsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
@@ -11,11 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +32,7 @@ import com.williangoncalves.whatsapp.helper.RecyclerItemClickListener;
 import com.williangoncalves.whatsapp.helper.UsuarioFirebase;
 import com.williangoncalves.whatsapp.model.Usuario;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +48,7 @@ public class GrupoActivity extends AppCompatActivity {
     private DatabaseReference usuariosRef;
     private FirebaseUser usuarioAtual;
     private Toolbar toolbar;
+    private FloatingActionButton fabAvancarCadastro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,25 +56,18 @@ public class GrupoActivity extends AppCompatActivity {
 
         binding = ActivityGrupoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        toolbar.setTitle(R.string.toolbar_novo_grupo);
         toolbar = findViewById(R.id.toolbar);
 
+        toolbar.setTitleTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        toolbar.setTitle(R.string.toolbar_novo_grupo);
         setSupportActionBar(toolbar);
-        atualizarMembrosToolbar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
-
         recyclerMembrosSelecionados = findViewById(R.id.recyclerMembrosSelecionados);
         recyclerMembros = findViewById(R.id.recyclerMembros);
+        fabAvancarCadastro = findViewById(R.id.fabAvancarCadastro);
+
         usuariosRef = ConfiguracaoFirebase.getFirebaseDatabase().child("usuarios");
         usuarioAtual = UsuarioFirebase.getUsuarioAtual();
 
@@ -100,6 +93,8 @@ public class GrupoActivity extends AppCompatActivity {
                 // Adicionando usuário na nova lista de selecionados:
                 listaMembrosSelecionados.add(usuarioSelecionado);
                 grupoSelecionadoAdapter.notifyDataSetChanged();
+
+                atualizarMembrosToolbar();
             }
 
             @Override
@@ -136,6 +131,8 @@ public class GrupoActivity extends AppCompatActivity {
                             // Adicionando à lista de membros:
                             listaMembros.add(usuarioSelecionado);
                             contatoAdapter.notifyDataSetChanged();
+
+                            atualizarMembrosToolbar();
                         }
 
                         @Override
@@ -150,6 +147,16 @@ public class GrupoActivity extends AppCompatActivity {
                     }
                 )
         );
+
+        // Configurando floating action button:
+        fabAvancarCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GrupoActivity.this, CadastroGrupoActivity.class);
+                intent.putExtra("membros", (Serializable) listaMembrosSelecionados);
+                startActivity(intent);
+            }
+        });
     }
 
     public void recuperarContatos() {
@@ -166,6 +173,7 @@ public class GrupoActivity extends AppCompatActivity {
                 }
 
                 contatoAdapter.notifyDataSetChanged();
+                atualizarMembrosToolbar();
             }
 
             @Override
@@ -189,7 +197,8 @@ public class GrupoActivity extends AppCompatActivity {
 
     public void atualizarMembrosToolbar() {
         int totalSelecionados = listaMembrosSelecionados.size();
-        int total = listaMembros.size();
+        int total = listaMembros.size() + totalSelecionados;
+        toolbar.setSubtitleTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
         toolbar.setSubtitle(totalSelecionados + " de " + total + " selecionados");
     }
 }
