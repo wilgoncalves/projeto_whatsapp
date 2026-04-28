@@ -10,11 +10,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.williangoncalves.whatsapp.adapter.GrupoSelecionadoAdapter;
 import com.williangoncalves.whatsapp.databinding.ActivityCadastroGrupoBinding;
 
 import com.williangoncalves.whatsapp.R;
@@ -27,7 +28,9 @@ public class CadastroGrupoActivity extends AppCompatActivity {
 
     private ActivityCadastroGrupoBinding binding;
     private List<Usuario> listaMembrosSelecionados = new ArrayList<>();
-    private TextView textTotalMembros;
+    private TextView textTotalParticipantes;
+    private GrupoSelecionadoAdapter grupoSelecionadoAdapter;
+    private RecyclerView recyclerMembrosGrupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +41,16 @@ public class CadastroGrupoActivity extends AppCompatActivity {
 
         // Configurando toolbar:
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+        toolbar.setTitleTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        toolbar.setTitle(R.string.novo_grupo);
+        toolbar.setSubtitleTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        toolbar.setSubtitle(R.string.defina_nome_subtitulo);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
 
-        textTotalMembros = findViewById(R.id.textTotal);
-
-        /*NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_cadastro_grupo);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);*/
+        textTotalParticipantes = findViewById(R.id.textTotalParticipantes);
+        recyclerMembrosGrupo = findViewById(R.id.recyclerMembrosGrupo);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +66,15 @@ public class CadastroGrupoActivity extends AppCompatActivity {
             List<Usuario> membros = (List<Usuario>) getIntent().getExtras().getSerializable("membros");
             listaMembrosSelecionados.addAll(membros);
 
-            textTotalMembros.setText("Total: " + listaMembrosSelecionados.size());
+            textTotalParticipantes.setText("Participantes: " + listaMembrosSelecionados.size());
         }
+
+        // Configurando RecyclerView:
+        grupoSelecionadoAdapter = new GrupoSelecionadoAdapter(listaMembrosSelecionados, getApplicationContext());
+        RecyclerView.LayoutManager layoutManagerHorizontal = new LinearLayoutManager(
+                getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerMembrosGrupo.setLayoutManager(layoutManagerHorizontal);
+        recyclerMembrosGrupo.setHasFixedSize(true);
+        recyclerMembrosGrupo.setAdapter(grupoSelecionadoAdapter);
     }
 }

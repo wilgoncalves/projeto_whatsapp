@@ -59,4 +59,8 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="nome_do_grupo">Nome do grupo</string>
+    <string name="nome_imagem_grupo">Defina um nome e uma imagem opcional</string>
+    <string name="novo_grupo">Novo grupo</string>
+    <string name="defina_nome_subtitulo">Defina o nome</string>
 </resources>
