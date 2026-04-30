@@ -5,14 +5,22 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -20,11 +28,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.williangoncalves.whatsapp.adapter.GrupoSelecionadoAdapter;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
 import com.williangoncalves.whatsapp.databinding.ActivityCadastroGrupoBinding;
 
 import com.williangoncalves.whatsapp.R;
+import com.williangoncalves.whatsapp.helper.UsuarioFirebase;
 import com.williangoncalves.whatsapp.model.Grupo;
 import com.williangoncalves.whatsapp.model.Usuario;
 
@@ -45,6 +55,8 @@ public class CadastroGrupoActivity extends AppCompatActivity {
     private static final int SELECAO_GALERIA = 200;
     private StorageReference storageReference;
     private Grupo grupo;
+    private FloatingActionButton fabSalvarGrupo;
+    private EditText editTextNomeGrupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +78,8 @@ public class CadastroGrupoActivity extends AppCompatActivity {
         textTotalParticipantes = findViewById(R.id.textTotalParticipantes);
         recyclerMembrosGrupo = findViewById(R.id.recyclerMembrosGrupo);
         circleImageGrupo = findViewById(R.id.circleImageGrupo);
+        fabSalvarGrupo = findViewById(R.id.fabSalvarGrupo);
+        editTextNomeGrupo = findViewById(R.id.editTextNomeGrupo);
         grupo = new Grupo();
 
         storageReference = ConfiguracaoFirebase.getFirebaseStorage();
@@ -78,15 +92,6 @@ public class CadastroGrupoActivity extends AppCompatActivity {
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, SELECAO_GALERIA);
                 }
-            }
-        });
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
             }
         });
 
@@ -105,6 +110,20 @@ public class CadastroGrupoActivity extends AppCompatActivity {
         recyclerMembrosGrupo.setLayoutManager(layoutManagerHorizontal);
         recyclerMembrosGrupo.setHasFixedSize(true);
         recyclerMembrosGrupo.setAdapter(grupoSelecionadoAdapter);
+
+        // Configurando FloatingActionButton:
+        fabSalvarGrupo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nomeGrupo = editTextNomeGrupo.getText().toString();
+
+                // Adicionando o usuário logado na lista de membros:
+                listaMembrosSelecionados.add(UsuarioFirebase.getDadosUsuarioLogado());
+                grupo.setMembros(listaMembrosSelecionados);
+                grupo.setNome(nomeGrupo);
+                //grupo.salvar();
+            }
+        });
     }
 
     @Override
@@ -127,10 +146,33 @@ public class CadastroGrupoActivity extends AppCompatActivity {
                     byte[] dadosImagem = byteArrayOutputStream.toByteArray();
 
                     // Salvando imagem no firebase:
-                    StorageReference imagemRef = storageReference
+                    final StorageReference imagemRef = storageReference
                             .child("imagens")
                             .child("grupos")
-                            .child("" + ".jpeg");
+                            .child(grupo.getId() + ".jpeg");
+
+                    UploadTask uploadTask = imagemRef.putBytes(dadosImagem);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(CadastroGrupoActivity.this, "Erro ao fazer upload da imagem",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(CadastroGrupoActivity.this, "Sucesso ao fazer upload da imagem",
+                                    Toast.LENGTH_SHORT).show();
+
+                            imagemRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    String url = task.getResult().toString();
+                                    grupo.setFoto(url);
+                                }
+                            });
+                        }
+                    });
                 }
             } catch (Exception e) {
                 e.printStackTrace();
