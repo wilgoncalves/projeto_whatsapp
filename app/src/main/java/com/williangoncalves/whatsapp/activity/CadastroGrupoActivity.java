@@ -121,7 +121,11 @@ public class CadastroGrupoActivity extends AppCompatActivity {
                 listaMembrosSelecionados.add(UsuarioFirebase.getDadosUsuarioLogado());
                 grupo.setMembros(listaMembrosSelecionados);
                 grupo.setNome(nomeGrupo);
-                //grupo.salvar();
+                grupo.salvar();
+
+                Intent intent = new Intent(new Intent(CadastroGrupoActivity.this, ChatActivity.class));
+                intent.putExtra("chatGrupo", grupo);
+                startActivity(intent);
             }
         });
     }

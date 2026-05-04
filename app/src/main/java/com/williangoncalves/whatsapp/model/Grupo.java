@@ -2,6 +2,7 @@ package com.williangoncalves.whatsapp.model;
 
 import com.google.firebase.database.DatabaseReference;
 import com.williangoncalves.whatsapp.config.ConfiguracaoFirebase;
+import com.williangoncalves.whatsapp.helper.Base64Custom;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,6 +20,27 @@ public class Grupo implements Serializable {
 
         String idGrupoFirebase = grupoRef.push().getKey();
         setId(idGrupoFirebase);
+    }
+
+    public void salvar() {
+        DatabaseReference databaseReference = ConfiguracaoFirebase.getFirebaseDatabase();
+        DatabaseReference grupoRef = databaseReference.child("grupos");
+
+        grupoRef.child(getId()).setValue(this);
+
+        // Salvar conversas para membros do grupo:
+        for (Usuario membro : getMembros()) {
+            String idRemetente = Base64Custom.codificarBase64(membro.getEmail());
+            String idDestinatario = getId();
+
+            Conversa conversa = new Conversa();
+            conversa.setIdRemetente(idRemetente);
+            conversa.setIdDestinatario(idDestinatario);
+            conversa.setUltimaMensagem("");
+            conversa.setIsGroup("true");
+            conversa.setGrupo(this);
+            conversa.salvar();
+        }
     }
 
     public String getId() {
