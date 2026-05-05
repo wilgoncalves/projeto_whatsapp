@@ -61,6 +61,7 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView imageViewCamera;
     private static final int SELECAO_CAMERA = 100;
     private Usuario usuarioDestinatario;
+    private Usuario usuarioRemetente;
 
     // Identificadores dos usuários remetente e destinatário:
     private String idUsuarioRemetente, idUsuarioDestinatario;
@@ -95,6 +96,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // Recuperando dados do usuario remetente:
         idUsuarioRemetente = UsuarioFirebase.getIdUsuario();
+        usuarioRemetente = UsuarioFirebase.getDadosUsuarioLogado();
 
         // Recuperar dados do usuário de destino:
         Bundle bundle = getIntent().getExtras();
@@ -244,7 +246,6 @@ public class ChatActivity extends AppCompatActivity {
                 salvarConversa(idUsuarioRemetente, idUsuarioDestinatario, usuarioDestinatario, mensagem, false);
 
                 // Salvar conversa destinatário:
-                Usuario usuarioRemetente = UsuarioFirebase.getDadosUsuarioLogado();
                 salvarConversa(idUsuarioDestinatario, idUsuarioRemetente, usuarioRemetente, mensagem, false);
             } else {
                 for (Usuario membro : grupo.getMembros()) {
@@ -254,6 +255,7 @@ public class ChatActivity extends AppCompatActivity {
                     Mensagem mensagem = new Mensagem();
                     mensagem.setIdUsuario(idUsuarioLogadoGrupo);
                     mensagem.setMensagem(textoMensagem);
+                    mensagem.setNome(usuarioRemetente.getNome());
 
                     // Salvando mensagem para o membro:
                     salvarMensagem(idRemetenteGrupo, idUsuarioDestinatario, mensagem);
