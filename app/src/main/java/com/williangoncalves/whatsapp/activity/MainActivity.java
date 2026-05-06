@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.string.fragment_contatos, ContatosFragment.class)
                 .create()
         );
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        final ViewPager viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
 
         SmartTabLayout smartTabLayout = findViewById(R.id.smartTabLayout);
@@ -91,10 +91,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Log.d("evento", "onQueryTextChange");
-                ConversasFragment fragment = (ConversasFragment) adapter.getPage(0);
 
-                if (newText != null && !newText.isEmpty()) {
-                    fragment.pesquisarConversas(newText.toLowerCase());
+                // Verificando se estamos pesquisando em Conversas ou Contatos:
+                switch (viewPager.getCurrentItem()) {
+                    case 0:
+                        ConversasFragment conversasFragment = (ConversasFragment) adapter.getPage(0);
+                        if (newText != null && !newText.isEmpty()) {
+                            conversasFragment.pesquisarConversas(newText.toLowerCase());
+                        } else {
+                            conversasFragment.recarregarConversas();
+                        }
+                        break;
+                    case 1:
+                        ContatosFragment contatosFragment = (ContatosFragment) adapter.getPage(1);
+                        if (newText != null && !newText.isEmpty()) {
+                            contatosFragment.pesquisarContatos(newText.toLowerCase());
+                        } else {
+                            contatosFragment.recarregarContatos();
+                        }
+                        break;
                 }
                 return true;
             }

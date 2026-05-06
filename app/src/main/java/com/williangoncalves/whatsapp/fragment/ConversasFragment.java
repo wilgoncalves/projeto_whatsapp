@@ -69,7 +69,8 @@ public class ConversasFragment extends Fragment {
                 new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Conversa conversaSelecionada = listaConversas.get(position);
+                List<Conversa> listaConversasAtualizada = adapter.getConversas();
+                Conversa conversaSelecionada = listaConversasAtualizada.get(position);
 
                 if (conversaSelecionada.getIsGroup().equals("true")) {
                     Intent intent = new Intent(new Intent(getActivity(), ChatActivity.class));
@@ -120,11 +121,20 @@ public class ConversasFragment extends Fragment {
         List<Conversa> listaConversasBusca = new ArrayList<>();
 
         for (Conversa conversa : listaConversas) {
-            String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
-            String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
+            if (conversa.getUsuarioExibicao() != null) {
+                String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
+                String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
 
-            if (nome.contains(texto) || ultimaMensagem.contains(texto)) {
-                listaConversasBusca.add(conversa);
+                if (nome.contains(texto) || ultimaMensagem.contains(texto)) {
+                    listaConversasBusca.add(conversa);
+                }
+            } else {
+                String nome = conversa.getGrupo().getNome().toLowerCase();
+                String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
+
+                if (nome.contains(texto) || ultimaMensagem.contains(texto)) {
+                    listaConversasBusca.add(conversa);
+                }
             }
         }
 
@@ -140,7 +150,7 @@ public class ConversasFragment extends Fragment {
     }
 
     public void recuperarConversas() {
-
+        listaConversas.clear();
         childEventListenerConversas = conversasRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
